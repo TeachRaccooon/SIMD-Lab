@@ -55,7 +55,7 @@ void APFlow::CalcFlow()
                 // Store larger of two
                 m_fl_ij = _mm_max_epu8(m_fl_ij, m_fl_vj);
 
-                _mm_store_si128((__m128i*)(Flow_ptr + (i * N + j)), m_fl_ij);
+                _mm_store_si128((__m128i*)(&Flow_ptr [i * N + j]), m_fl_ij);
             }
         }
     }
