@@ -46,9 +46,27 @@ double TheTips::solve(vector <string> Cl, vector <int> probability, int print)
     // _mm_or_si128 does a bitwise of of 128 bits
 
     // Looks like there's a bunch of tests when stuff doesn't fir right, in that case, we'll just use Plank's solution lol 
-    if(C[0].size() % 128 == 0)
-    {
 
+    if(!(C[0].size() % 128))
+    {
+        for (v = 0; v < C.size(); v++) 
+        {
+            for (i = 0; i < C.size(); i++) 
+            {
+                if (C[i][v]) 
+                {
+                    for (j = 0; j < C.size(); j += 128 / (8 * sizeof(char))) 
+                    {
+                        
+                        __m128i c_ij = _mm_load_si128((const __m128i*)& (C[i][j]));
+                        __m128i c_vj = _mm_load_si128((const __m128i*)& (C[v][j]));
+                        __m128i res = _mm_or_si128(c_ij, c_vj);
+                        
+                        _mm_store_si128((__m128i*)&(C[i][j]), res);
+                    }
+                }
+            }
+        }
     }
     else
     {
