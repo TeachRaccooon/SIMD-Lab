@@ -28,13 +28,6 @@ void APFlow::CalcFlow()
 
     for (i = 0; i < N*N; i++) Flow[i] = Adj[i];
 
-    uint8_t *Flow_ptr = Flow;
-
-    for(i = 0; i < N; ++i)
-    {
-        Flow_ptr[i * N + i] = 0xff;
-    }
-
     for (v = 0; v < N; ++v) 
     {
         for(i = 0; i < N; ++i)
