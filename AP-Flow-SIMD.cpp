@@ -33,26 +33,22 @@ void APFlow::CalcFlow()
     {
         for(i = 0; i < N; ++i)
         {
-            //unsigned char fl_iv = Flow[i * N + v];
-
-            __m128i m_fl_iv;
             // Integer broadcast
-            m_fl_iv = _mm_set1_epi8((unsigned char) Flow[i * N + v]);
+            __m128i fl_iv = _mm_set1_epi8((unsigned char) Flow[i * N + v]);
 
             // So the logic below is identical to the inner loop above
             for(j = 0; j < N; j += 128 / (8 * sizeof(char)))
             {
-                __m128i m_fl_ij, m_fl_vj;
-                m_fl_ij = _mm_load_si128((const __m128i*)(&Flow[i * N + j]));
-                m_fl_vj = _mm_load_si128((const __m128i*)(&Flow[v * N + j]));
+                __m128i fl_ij = _mm_load_si128((const __m128i*)(&Flow[i * N + j]));
+                __m128i fl_vj = _mm_load_si128((const __m128i*)(&Flow[v * N + j]));
 
                 // Store smaller of two
-                m_fl_vj = _mm_min_epu8(m_fl_vj, m_fl_iv);
+                fl_vj = _mm_min_epu8(fl_vj, fl_iv);
                 // Store larger of two
-                m_fl_ij = _mm_max_epu8(m_fl_ij, m_fl_vj);
+                fl_ij = _mm_max_epu8(fl_ij, fl_vj);
 
                 // store where it belongs, just like above
-                _mm_store_si128((__m128i*)(&Flow[i * N + j]), m_fl_ij);
+                _mm_store_si128((__m128i*)(&Flow[i * N + j]), fl_ij);
             }
         }
     }
