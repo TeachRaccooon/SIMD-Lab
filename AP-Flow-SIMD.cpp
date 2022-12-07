@@ -1,12 +1,12 @@
 #include "AP-Flow.h"
 #include <emmintrin.h>
-#include <cstring>
 
 void APFlow::CalcFlow()
 {
 
-
     /*
+    int i, j, v, f;
+
     for (i = 0; i < N*N; i++) Flow[i] = Adj[i];
 
     for (v = 0; v < N; ++v) 
@@ -24,40 +24,40 @@ void APFlow::CalcFlow()
     */
 
 
-   /* abbreviated flow and N */
-   uint8_t *lflow = APFlow::Flow;
-   int lN = APFlow::N;
+    int i, j, v, f;
 
+    for (i = 0; i < N*N; i++) Flow[i] = Adj[i];
 
+    uint8_t *Flow_ptr = Flow;
 
-   int i, j, k;
+    for(i = 0; i < N; ++i)
+    {
+        Flow_ptr[i * N + i] = 0xff;
+    }
 
-   for(i = 0; i < lN; i++)
-   {
-      lflow[i*N + i] = 0xff;
-   }
+    for (v = 0; v < N; ++v) 
+    {
+        for(i = 0; i < N; ++i)
+        {
+            unsigned char fl_iv = Flow[i * N + v];
 
-   for(k = 0; k < lN; k++)
-   {
-      for(i = 0; i < lN; i++)
-      {
-         unsigned char lflow_ik = lflow[i*lN + k];
-         __m128i m_flow_ik;
-         m_flow_ik = _mm_set1_epi8(lflow_ik);
-         for(j = 0; j < lN; j+=128/(8*sizeof(char)))
-         {
-            __m128i m_flow_ij, m_flow_kj;
-            m_flow_ij = _mm_load_si128((const __m128i*)(lflow + (i*lN + j)));
-            m_flow_kj = _mm_load_si128((const __m128i*)(lflow + (k*lN + j)));
+            __m128i m_fl_iv;
+            m_fl_iv = _mm_set1_epi8(fl_iv);
 
-            /* store in m_flow_kj the lesser between it and m_flow_ik */
-            m_flow_kj = _mm_min_epu8(m_flow_kj, m_flow_ik);
-            /* store in m_flow_ij the larger between it and m_flow_kj */
-            m_flow_ij = _mm_max_epu8(m_flow_ij, m_flow_kj);
+            for(j = 0; j < N; j += 128 / (8 * sizeof(char)))
+            {
+                __m128i m_fl_ij, m_fl_vj;
+                m_fl_ij = _mm_load_si128((const __m128i*)(Flow_ptr + (i * N + j)));
+                m_fl_vj = _mm_load_si128((const __m128i*)(Flow_ptr + (v * N + j)));
 
-            _mm_store_si128((__m128i*)(lflow + (i*N + j)), m_flow_ij);
-         }
-      }
-   }
+                // Store smaller of two
+                m_fl_vj = _mm_min_epu8(m_fl_vj, m_fl_iv);
+                // Store larger of two
+                m_fl_ij = _mm_max_epu8(m_fl_ij, m_fl_vj);
+
+                _mm_store_si128((__m128i*)(Flow_ptr + (i * N + j)), m_fl_ij);
+            }
+        }
+    }
 
 }
