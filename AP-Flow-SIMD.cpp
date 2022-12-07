@@ -1,5 +1,6 @@
 #include "AP-Flow.h"
 #include <emmintrin.h>
+#include <cstring>
 
 void APFlow::CalcFlow()
 {
