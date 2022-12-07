@@ -47,8 +47,8 @@ void APFlow::CalcFlow()
             for(j = 0; j < N; j += 128 / (8 * sizeof(char)))
             {
                 __m128i m_fl_ij, m_fl_vj;
-                m_fl_ij = _mm_load_si128((const __m128i*)(Flow_ptr + (i * N + j)));
-                m_fl_vj = _mm_load_si128((const __m128i*)(Flow_ptr + (v * N + j)));
+                m_fl_ij = _mm_load_si128((const __m128i*)(&Flow[i * N + j]));
+                m_fl_vj = _mm_load_si128((const __m128i*)(&Flow[v * N + j]));
 
                 // Store smaller of two
                 m_fl_vj = _mm_min_epu8(m_fl_vj, m_fl_iv);
