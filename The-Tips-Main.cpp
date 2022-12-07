@@ -1,5 +1,13 @@
 #include "The-Tips.h"
 #include <string.h>
+#include <signal.h>
+#include <unistd.h>
+
+void alarm_handler(int dummy)
+{
+  fprintf(stderr, "Timed Out!\n");
+  exit(0);
+}
 
 int main(int argc, char **argv)
 {
@@ -11,6 +19,8 @@ int main(int argc, char **argv)
   vector <string> clues;
   vector <int> probability;
 
+  signal(SIGALRM, alarm_handler);
+  alarm(4);
   if (argc == 2) {
 
      if (atoi(argv[1]) == 0) {
@@ -73,13 +83,6 @@ int main(int argc, char **argv)
         probability.push_back(50);
         probability.push_back( 50);
         probability.push_back( 1);
-      }
-    
-     if (atoi(argv[1]) == 6) {
-        clues.push_back("NY");
-        clues.push_back("NN");
-        probability.push_back(50);
-        probability.push_back(50);
       }
     
 
