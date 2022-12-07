@@ -25,7 +25,6 @@ void APFlow::CalcFlow()
 
 
     uint8_t *Flow_ptr = Flow;
-    int i, j, v, f;
 
 
     for(i = 0; i < N; ++i)
