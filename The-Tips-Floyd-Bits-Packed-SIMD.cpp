@@ -42,8 +42,10 @@ double TheTips::solve(vector <string> Cl, vector <int> probability, int print)
         printf("\n");
     }
 
-    __m128i c_ij, c_vj, res;
+    //__m128i c_ij, c_vj, res;
 
+
+    // So we just need to substitute this with a SIMD alternative
     for (v = 0; v < C.size(); v++) 
     {
         for (i = 0; i < C.size(); i++) 
