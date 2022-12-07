@@ -42,37 +42,15 @@ double TheTips::solve(vector <string> Cl, vector <int> probability, int print)
         printf("\n");
     }
 
-    //__m128i c_ij, c_vj, res;
-
-    // So we just need to substitute this with a SIMD alternative
-    
-    /*
-    for (v = 0; v < C.size(); v++) 
-    {
-        for (i = 0; i < C.size(); i++) 
-        {
-            if (C[i][v]) 
-            {
-                for (j = 0; j < C.size(); j++) 
-                {
-                    
-                    //c_ij = _mm_load_si128((const __m128i*)& (C[i][j]));
-                    //c_vj = _mm_load_si128((const __m128i*)& (C[v][j]));
-                    //res = _mm_or_si128(c_ij, c_vj);
-                    //_mm_store_si128((__m128i*)&(C[i][j]), res);
-
-                    C[i][j] |= C[v][j];
-                }
-            }
-        }
-    }
-    */
-
-
     // We're dealing with a 2-d vector of chars, each cell is 1 bit (but we'll use sizeof to be extra safe)
     // _mm_or_si128 does a bitwise of of 128 bits
 
+    // Looks like there's a bunch of tests when stuff doesn't fir right, in that case, we'll just use Plank's solution lol 
     if(C[0].size() % 128 == 0)
+    {
+
+    }
+    else
     {
         for (v = 0; v < C.size(); v++) 
         {
@@ -80,42 +58,13 @@ double TheTips::solve(vector <string> Cl, vector <int> probability, int print)
             {
                 if (C[i][v]) 
                 {
-                    for (j = 0; j < C.size(); j += 128 / (8 * sizeof(char))) 
+                    for (j = 0; j < C.size(); j++) 
                     {
-                        
-                        __m128i c_ij = _mm_load_si128((const __m128i*)& (C[i][j]));
-                        __m128i c_vj = _mm_load_si128((const __m128i*)& (C[v][j]));
-                        __m128i res = _mm_or_si128(c_ij, c_vj);
-                        
-                        _mm_store_si128((__m128i*)&(C[i][j]), res);
-
-                    // C[i][j] |= C[v][j];
+                        C[i][j] |= C[v][j];
                     }
                 }
             }
         }
-    }
-    else
-    {
-        for (v = 0; v < C.size(); v++) 
-    {
-        for (i = 0; i < C.size(); i++) 
-        {
-            if (C[i][v]) 
-            {
-                for (j = 0; j < C.size(); j++) 
-                {
-                    
-                    //c_ij = _mm_load_si128((const __m128i*)& (C[i][j]));
-                    //c_vj = _mm_load_si128((const __m128i*)& (C[v][j]));
-                    //res = _mm_or_si128(c_ij, c_vj);
-                    //_mm_store_si128((__m128i*)&(C[i][j]), res);
-
-                    C[i][j] |= C[v][j];
-                }
-            }
-        }
-    }
     }
 
 
