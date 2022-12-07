@@ -24,37 +24,41 @@ void APFlow::CalcFlow()
     */
 
 
-    uint8_t *Flow_ptr = Flow;
+   memcpy(APFlow::Flow, APFlow::Adj, APFlow::N*APFlow::N);
+   /* abbreviated flow and N */
+   uint8_t *lflow = APFlow::Flow;
+   int lN = APFlow::N;
 
 
-    for(i = 0; i < N; ++i)
-    {
-        Flow_ptr[i * N + i] = 0xff;
-    }
 
-    for (v = 0; v < N; ++v) 
-    {
-        for(i = 0; i < N; ++i)
-        {
-            unsigned char fl_iv = Flow[i * N + v];
+   int i, j, k;
 
-            __m128i m_fl_iv;
-            m_fl_iv = _mm_set1_epi8(fl_iv);
+   for(i = 0; i < lN; i++)
+   {
+      lflow[i*N + i] = 0xff;
+   }
 
-            for(j = 0; j < N; j += 128 / (8 * sizeof(char)))
-            {
-                __m128i m_fl_ij, m_fl_vj;
-                m_fl_ij = _mm_load_si128((const __m128i*)(Flow_ptr + (i * N + j)));
-                m_fl_vj = _mm_load_si128((const __m128i*)(Flow_ptr + (v * N + j)));
+   for(k = 0; k < lN; k++)
+   {
+      for(i = 0; i < lN; i++)
+      {
+         unsigned char lflow_ik = lflow[i*lN + k];
+         __m128i m_flow_ik;
+         m_flow_ik = _mm_set1_epi8(lflow_ik);
+         for(j = 0; j < lN; j+=128/(8*sizeof(char)))
+         {
+            __m128i m_flow_ij, m_flow_kj;
+            m_flow_ij = _mm_load_si128((const __m128i*)(lflow + (i*lN + j)));
+            m_flow_kj = _mm_load_si128((const __m128i*)(lflow + (k*lN + j)));
 
-                // Store smaller of two
-                m_fl_vj = _mm_min_epu8(m_fl_vj, m_fl_iv);
-                // Store larger of two
-                m_fl_ij = _mm_max_epu8(m_fl_ij, m_fl_vj);
+            /* store in m_flow_kj the lesser between it and m_flow_ik */
+            m_flow_kj = _mm_min_epu8(m_flow_kj, m_flow_ik);
+            /* store in m_flow_ij the larger between it and m_flow_kj */
+            m_flow_ij = _mm_max_epu8(m_flow_ij, m_flow_kj);
 
-                _mm_store_si128((__m128i*)(Flow_ptr + (i * N + j)), m_fl_ij);
-            }
-        }
-    }
+            _mm_store_si128((__m128i*)(lflow + (i*N + j)), m_flow_ij);
+         }
+      }
+   }
 
 }
