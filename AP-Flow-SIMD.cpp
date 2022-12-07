@@ -1,10 +1,13 @@
 #include "AP-Flow.h"
+// Yo isnt this the last name of that dude from Breaking Bad??
 #include <emmintrin.h>
 
 void APFlow::CalcFlow()
 {
 
     /*
+    // From da notes 
+
     int i, j, v, f;
 
     for (i = 0; i < N*N; i++) Flow[i] = Adj[i];
