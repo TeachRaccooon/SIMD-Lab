@@ -24,7 +24,6 @@ void APFlow::CalcFlow()
     */
 
 
-   memcpy(APFlow::Flow, APFlow::Adj, APFlow::N*APFlow::N);
    /* abbreviated flow and N */
    uint8_t *lflow = APFlow::Flow;
    int lN = APFlow::N;
