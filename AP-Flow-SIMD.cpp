@@ -4,7 +4,6 @@
 void APFlow::CalcFlow()
 {
 
-    int i, j, v, f;
 
     /*
     for (i = 0; i < N*N; i++) Flow[i] = Adj[i];
