@@ -1,5 +1,5 @@
 #include "The-Tips.h"
-
+#include <emmintrin.h>
 
 
 double TheTips::solve(vector <string> Cl, vector <int> probability, int print)
@@ -42,6 +42,8 @@ double TheTips::solve(vector <string> Cl, vector <int> probability, int print)
         printf("\n");
     }
 
+    __m128i c_ij, c_vj, res;
+
     for (v = 0; v < C.size(); v++) 
     {
         for (i = 0; i < C.size(); i++) 
@@ -50,7 +52,12 @@ double TheTips::solve(vector <string> Cl, vector <int> probability, int print)
             {
                 for (j = 0; j < C.size(); j++) 
                 {
-                    C[i][j] |= C[v][j];
+                    c_ij = _mm_load_si128((const __m128i*)& (C[i][j]));
+                    c_vj = _mm_load_si128((const __m128i*)& (C[v][j]));
+                    res = _mm_or_si128(c_ij, c_vj);
+                    _mm_store_si128((__m128i*)&(C[i][j]), res);
+
+                    //C[i][j] |= C[v][j];
                 }
             }
         }
